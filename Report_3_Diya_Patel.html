@@ -1,0 +1,2114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Report Card - Diya Patel</title>
+<style>
+    /* ── Shared styles (edit shared/templates/common_styles.css to change all formats) ── */
+    /*
+  shared/templates/common_styles.css
+  ────────────────────────────────────
+  CSS rules shared across ALL Report Card formats (VI-VIII, IX, XI).
+  Each format's own CSS file includes this file and then adds
+  format-specific overrides below.
+
+  Edit HERE to update all three formats at once.
+*/
+
+/* ===== Custom Fonts ===== */
+@font-face {
+    font-family: 'Cinzel';
+    src: url('../templates/fonts/Cinzel-Bold.woff2') format('woff2'),
+         url('../templates/fonts/Cinzel-Bold.woff') format('woff'),
+         url('../templates/fonts/Cinzel-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('../templates/fonts/PlayfairDisplay-Bold.woff2') format('woff2'),
+         url('../templates/fonts/PlayfairDisplay-Bold.woff') format('woff'),
+         url('../templates/fonts/PlayfairDisplay-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ===== Base Reset ===== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #cfd8dc;
+    margin: 0;
+    padding: 20px;
+    font-size: 11.5px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    box-sizing: border-box;
+}
+
+/* ===== Print Settings ===== */
+@media print {
+    @page {
+        size: A4 landscape;
+        margin: 4mm;
+    }
+    body {
+        background-color: white;
+        padding: 0;
+        margin: 0;
+    }
+    .front-container, .back-page {
+        width: 100%;
+        max-width: none;
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        page-break-after: always;
+    }
+    .back-page {
+        height: 100vh;
+    }
+}
+
+/* =========================================
+   PRINT CONTROLS (UI buttons — fixed overlay)
+   ========================================= */
+.print-controls {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    gap: 15px;
+    z-index: 9999;
+}
+
+.print-btn {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.print-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+}
+
+.btn-color { background: #ff5722; }
+.btn-color:hover { background: #e64a19; }
+
+.btn-bw { background: #37474f; }
+.btn-bw:hover { background: #263238; }
+
+@media print { .print-controls { display: none !important; } }
+
+/* =========================================
+   NA / AB MARK BADGES
+   Applied by the mc() macro in shared/_macros.html.
+
+   .cell-na  → subject Not Applicable — grey,  excluded from % denominator
+   .cell-ab  → student was Absent     — amber, counts as 0 in denominator
+   ========================================= */
+
+.cell-na {
+    display: inline-block;
+    min-width: 26px;
+    padding: 1px 3px;
+    background: #e0e0e0;
+    color: #555;
+    border: 1px solid #bdbdbd;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 8pt;
+    text-align: center;
+    letter-spacing: 0.3px;
+}
+
+.cell-ab {
+    display: inline-block;
+    min-width: 26px;
+    padding: 1px 3px;
+    background: #fff3e0;
+    color: #e65100;
+    border: 1px solid #ffb74d;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 8pt;
+    text-align: center;
+    letter-spacing: 0.3px;
+}
+
+/* B&W print overrides — keep badges legible in monochrome */
+body.print-mode-bw .cell-na {
+    background: #e0e0e0 !important;
+    color: #333 !important;
+    border-color: #999 !important;
+}
+
+body.print-mode-bw .cell-ab {
+    background: #f5f5f5 !important;
+    color: #333 !important;
+    border-color: #999 !important;
+    font-style: italic;
+}
+
+@media print {
+    .cell-na {
+        background: #e0e0e0 !important;
+        color: #555 !important;
+        border: 1px solid #bdbdbd !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .cell-ab {
+        background: #fff3e0 !important;
+        color: #e65100 !important;
+        border: 1px solid #ffb74d !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+/* =========================================
+   B&W PRINT MODE — shared overrides
+   (format-specific B&W rules stay in each format's CSS)
+   ========================================= */
+
+/* 1. Universal box-sizing */
+body.print-mode-bw * {
+    -webkit-box-sizing: border-box !important;
+    -moz-box-sizing: border-box !important;
+    box-sizing: border-box !important;
+    color: black !important;
+}
+
+/* 2. Base */
+body.print-mode-bw {
+    background-color: white !important;
+}
+
+/* 3. Strip Backgrounds */
+body.print-mode-bw .bg-green,
+body.print-mode-bw .bg-pink,
+body.print-mode-bw .bg-blue,
+body.print-mode-bw .bg-scholastic,
+body.print-mode-bw .header-grid,
+body.print-mode-bw .section-header,
+body.print-mode-bw .table-header-bg,
+body.print-mode-bw .f-label,
+body.print-mode-bw .label-cell,
+body.print-mode-bw .grade-badge,
+body.print-mode-bw .badge-danger,
+body.print-mode-bw .session-badge,
+body.print-mode-bw .promotion-banner,
+body.print-mode-bw .summary-label,
+body.print-mode-bw .scholastic-label,
+body.print-mode-bw .subject-cell,
+body.print-mode-bw .attendance-term-box,
+body.print-mode-bw .attendance-overall-box,
+body.print-mode-bw .achievement-content,
+body.print-mode-bw .photo-placeholder,
+body.print-mode-bw .back-page th,
+body.print-mode-bw .back-page tr:nth-child(even),
+body.print-mode-bw .back-page tr:nth-child(odd) {
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+/* 4. Header grid border restore */
+body.print-mode-bw .header-grid {
+    border: 1px solid black !important;
+    border-radius: 0 !important;
+    grid-template-columns: 150px 1fr 120px !important;
+    padding: 10px !important;
+}
+
+body.print-mode-bw .logo-box,
+body.print-mode-bw .photo-box {
+    height: 140px !important;
+}
+
+body.print-mode-bw .section-header,
+body.print-mode-bw .table-header-bg,
+body.print-mode-bw .grade-badge,
+body.print-mode-bw .badge-danger,
+body.print-mode-bw .session-badge,
+body.print-mode-bw .promotion-banner,
+body.print-mode-bw .scholastic-label,
+body.print-mode-bw .attendance-term-box,
+body.print-mode-bw .attendance-overall-box,
+body.print-mode-bw .achievement-content,
+body.print-mode-bw .photo-placeholder,
+body.print-mode-bw .student-photo-box,
+body.print-mode-bw .attendance-box {
+    border: 1px solid black !important;
+}
+
+/* Summary profile box */
+body.print-mode-bw .summary-table {
+    border: 1px solid black !important;
+}
+body.print-mode-bw .summary-row {
+    border-bottom: 1px solid black !important;
+}
+body.print-mode-bw .summary-row:last-child {
+    border-bottom: none !important;
+}
+body.print-mode-bw .summary-label {
+    border-right: 1px solid black !important;
+}
+
+/* Footer borders */
+body.print-mode-bw .footer-block {
+    border: 1px solid black !important;
+}
+body.print-mode-bw .f-label {
+    border: none !important;
+    border-right: 1px solid black !important;
+}
+
+/* 5. Table borders */
+body.print-mode-bw table,
+body.print-mode-bw th,
+body.print-mode-bw td {
+    border-collapse: collapse !important;
+}
+
+/* 6. Nested table fix */
+body.print-mode-bw .section-box,
+body.print-mode-bw .grade-scale-box,
+body.print-mode-bw .main-grid,
+body.print-mode-bw .second-row,
+body.print-mode-bw .third-row {
+    border: none !important;
+    background: transparent !important;
+}
+
+/* 7. True nested tables */
+body.print-mode-bw td:has(table),
+body.print-mode-bw th:has(table) {
+    border: none !important;
+    padding: 0 !important;
+}
+
+/* 8. Text overrides */
+body.print-mode-bw .report-title {
+    border-bottom: 1px solid black !important;
+}
+
+body.print-mode-bw .school-name {
+    text-shadow: none !important;
+}
+
+body.print-mode-bw .school-meta-inline {
+    filter: grayscale(100%) brightness(40%);
+}
+
+/* 9. Hide watermarks in B&W */
+body.print-mode-bw .watermark-text,
+body.print-mode-bw .watermark-image { display: none !important; }
+
+    /* ── XI-specific styles (overrides/additions for Class XI format) ── */
+
+    /* Reset and Box Model Fix */
+    * {
+        box-sizing: border-box;
+    }
+
+    /* ========== FRONT PAGE CSS ========== */
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #cfd8dc; 
+        margin: 0;
+        padding: 20px;
+        font-size: 13px; 
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .front-container {
+        max-width: 1150px;
+        background-color: white;
+        margin: 0 auto 10px auto; /* Reduced bottom margin */
+        padding: 15px 25px; /* Reduced top/bottom padding */
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        border-top: 5px solid #003366;
+        page-break-after: always;
+    }
+
+    /* --- COMPACT HEADER GRID --- */
+    .header-grid {
+        display: grid;
+        /* Columns: Logo (120px) | Text (Auto) | Photo (100px - Narrower) */
+        grid-template-columns: 150px 1fr 120px; 
+        gap: 10px;
+        align-items: center;
+        background-color: #fff9e6; 
+        padding: 6px 10px; /* Reduced padding significantly */
+        border-radius: 8px; 
+        border: 1px solid #e6d8b0;
+        margin-bottom: 10px; /* Reduced margin below header */
+    }
+
+    /* --- COMPACT IMAGE BOXES --- */
+    .logo-box, .photo-box {
+        width: 100%;
+        height: 140px; /* Reduced height from 150px */
+        background-color: #fff;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .logo-box img, .photo-box img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+		object-position: top;
+    }
+
+    .header-text {
+        text-align: center;
+        color: #333;
+    }
+
+    /* --- SMALLER REPORT TITLE --- */
+    .report-title {
+        color: #800000;
+        font-family: 'Cinzel', serif;
+        font-size: 16px; /* Reduced from 24px */
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-bottom: 1px solid #ccc;
+        display: inline-block;
+        margin-bottom: 2px;
+        padding-bottom: 1px;
+    }
+
+    /* --- ADJUSTED SCHOOL NAME SIZE --- */
+    .school-name {
+        color: #003366;
+        font-family: 'Playfair Display', serif;
+        font-size: 30px; /* Slightly reduced to fit compact header */
+        font-weight: 700;
+        margin-bottom: 2px;
+        line-height: 1;
+        text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+    }
+
+    .compact-details { line-height: 1.3; }
+    
+    .school-address { 
+    font-size: 16px;  /* Increased from 12px */
+    font-weight: 700; 
+    color: #333; 
+    margin: 0 0 2px 0;
+    letter-spacing: 0.3px;
+    }
+
+    .school-meta-inline {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        flex-wrap: wrap;
+        font-size: 11.5px;
+        color: #444;
+        margin-top: 1px;
+        line-height: 1.4;
+    }
+
+    .meta-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        white-space: nowrap;
+    }
+
+    .meta-separator {
+        color: #bbb;
+        font-weight: 300;
+        font-size: 10px;
+    }
+
+    .affiliation {
+        font-weight: 600;
+        color: #003366;
+        letter-spacing: 0.2px;
+    }
+
+    .phone {
+        color: #555;
+        font-weight: 500;
+    }
+
+    .email {
+        color: #555;
+        font-weight: 500;
+    }
+
+    
+
+    .session-badge {
+        background-color: #003366;
+        color: white;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: bold;
+        display: inline-block;
+        margin-top: 3px; 
+    }
+    
+    .class-info {
+        font-size: 14px; 
+        font-weight: bold; 
+        color: #333; 
+        margin-top: 2px;
+    }
+
+    .info-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #888;
+        margin-top:25px;
+        margin-bottom: 25px; 
+    }
+
+    .info-table td {
+        border: 1px solid #888;
+        padding: 5px 8px; /* Tighter cell padding */
+        font-size: 13px; 
+    }
+
+    .label-cell {
+        font-size: 12px;
+        font-weight: 700;
+        width: 12%;
+        color: #003366;
+        background-color: #e0e0e0;
+    }
+    
+    .marks-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #444; 
+        margin-bottom: 12px; 
+        table-layout: fixed;
+    }
+
+    .marks-table th {
+        border: 1px solid #444;
+        padding: 3px 2px;
+        text-align: center;
+        font-size: 11px; 
+        overflow: hidden;
+    }
+
+    .marks-table td {
+        border: 1px solid #444;
+        padding: 4px 3px;
+        text-align: center;
+        font-size: 13px; 
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .bg-scholastic { background-color: #cfd8dc; color: #003366; }
+    .bg-green { background-color: #dcedc8; }
+    .bg-pink { background-color: #ffcdd2; }
+    .bg-blue { background-color: #bbdefb; }
+    
+    .header-row-1 th {
+        padding: 5px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .pink-corner-header {
+        height: 130px; 
+        width: 140px;
+        padding: 0 !important;
+        vertical-align: top;
+        background-color: #cfd8dc; 
+    }
+    
+    .pink-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+    }
+    
+    .scholastic-label {
+        flex: 0 0 30px; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid #444; 
+        font-weight: bold;
+        font-size: 11px;
+        color: #003366;
+    }
+    
+    .subject-name-label {
+        flex: 1; 
+        display: flex;
+        align-items: center; 
+        justify-content: center;
+        font-weight: bold;
+        font-size: 12px;
+        color: #000;
+    }
+
+    .vertical-th {
+        height: 210px; 
+        vertical-align: middle; 
+        padding: 0;
+        width: 28px;
+        max-width: 28px;
+    }
+
+    .vertical-wrapper {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        white-space: normal;
+        text-align: center; 
+        margin: 0 auto;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center; 
+        align-items: center;      
+        font-size: 11px;
+        font-weight: 700;
+        color: #222;
+        line-height: 1.2;
+        letter-spacing: 0.2px;
+    }
+
+    .subject-cell {
+        text-align: left !important; 
+        padding-left: 8px !important;
+        font-weight: bold;
+        background-color: #cfd8dc; 
+        color: #003366;
+        font-size: 11px;
+    }
+    
+    .col-v-bold {
+        font-weight: 900 !important;
+        color: #000;
+    }
+
+    .footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 25px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .footer-block {
+        display: flex;
+        border: 1px solid #003366;
+        font-size: 12px;
+        font-weight: bold;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .f-label {
+        background-color: #003366;
+        color: white;
+        padding: 5px 12px; /* Compact footer padding */
+        display: flex;
+        align-items: center;
+        text-transform: uppercase;
+    }
+
+    .f-value {
+        background-color: #fff;
+        color: #000;
+        padding: 5px 12px;
+        min-width: 50px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* ========== BACK PAGE CSS ========== */
+    .back-page { 
+        width: 297mm; 
+        height: 210mm; 
+        background: white; 
+        padding: 10mm 12mm; 
+        margin: 0 auto;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1); 
+        position: relative; 
+        overflow: hidden; 
+        display: flex; 
+        flex-direction: column; 
+        justify-content: space-between; 
+    }
+    
+    .watermark-image {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 99;
+        pointer-events: none;
+        opacity: 0.05;
+    }
+    
+    .watermark-image img {
+        width: 300px;
+        height: auto;
+        filter: grayscale(100%);
+    }
+    
+    .watermark-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-30deg);
+        font-size: 72pt;
+        color: rgba(0, 0, 0, 0.03);
+        font-weight: 700;
+        pointer-events: none;
+        z-index: 0;
+        letter-spacing: 15px;
+        font-family: Georgia, serif;
+    }
+    
+    .back-content { 
+        position: relative; 
+        z-index: 1; 
+        display: flex; 
+        flex-direction: column; 
+        height: 100%; 
+    }
+    
+    .main-grid { 
+        display: grid; 
+        grid-template-columns: 1fr 1fr 1fr; 
+        gap: 12px; 
+        margin-bottom: 10px; 
+    }
+    
+    .second-row { 
+        display: grid; 
+        grid-template-columns: 1fr 1fr 1fr; 
+        gap: 12px; 
+        margin-bottom: 10px; 
+    }
+    
+    .third-row { 
+        display: grid; 
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px; 
+        margin-bottom: 5px; 
+        flex-grow: 1; 
+    }
+    
+    .section-box, .grade-scale-box, .attendance-box, .student-photo-box, .achievement-box { 
+        border: 1px solid #475569; 
+        border-radius: 4px; 
+        overflow: hidden; 
+        background: #fff; 
+        display: flex; 
+        flex-direction: column; 
+        height: 100%; 
+    }
+	
+	.att-term-box {
+    text-align: center;
+    background: #e2e8f0;
+    padding: 6px;
+    border-radius: 3px;
+    border: 1px solid #cbd5e1;
+	}
+    
+    .section-header, .table-header-bg { 
+        background-color: #003366; 
+        color: white; 
+        padding: 5px; 
+        font-weight: 700; 
+        font-size: 9.5pt; 
+        text-align: center; 
+        letter-spacing: 0.5px; 
+        border-bottom: 2px solid #002244; 
+        text-transform: uppercase; 
+        flex-shrink: 0; 
+    }
+    
+    .back-page table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        flex: 1;
+    }
+    
+    .back-page td, .back-page th { 
+        border: 1px solid #94a3b8; 
+        padding: 3px 5px; 
+        text-align: center; 
+        font-size: 9pt; 
+        vertical-align: middle; 
+    }
+    
+    .back-page th { 
+        background: #f1f5f9; 
+        font-weight: 700; 
+        color: #003366; 
+        font-size: 8.5pt; 
+        text-transform: uppercase; 
+        height: 25px; 
+    }
+    
+    .back-page td { 
+        color: #333; 
+    }
+    
+    .left-align { 
+        text-align: left; 
+        padding-left: 8px; 
+        font-weight: 500; 
+    }
+    
+    .back-page tr:nth-child(even) { 
+        background: #e2e8f0; 
+    }
+    
+    .back-page tr:nth-child(odd) { 
+        background: #ffffff; 
+    }
+    
+    .grade-badge { 
+        display: inline-block; 
+        min-width: 24px; 
+        padding: 2px 6px; 
+        background: #003366; 
+        color: white; 
+        border-radius: 3px; 
+        font-weight: 700; 
+        font-size: 9pt; 
+        text-align: center; 
+    }
+    
+    .photo-container { 
+        display: flex; 
+        padding: 10px; 
+        gap: 12px; 
+        align-items: center; 
+        justify-content: center; 
+        height: 100%; 
+    }
+    
+    .photo-placeholder { 
+        width: 120px; 
+        height: 150px; 
+        border: 1px solid #cbd5e1; 
+        background: #f1f5f9; 
+        border-radius: 4px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        color: #94a3b8; 
+        font-size: 8pt; 
+        flex-shrink: 0; 
+        text-align: center; 
+        overflow: hidden;
+    }
+    
+    .photo-placeholder img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .summary-table-wrapper { 
+        flex: 1; 
+        height: 100%; 
+        display: flex; 
+        align-items: center; 
+    }
+    
+    .summary-table { 
+        width: 100%; 
+        border: 1px solid #e2e8f0; 
+        border-radius: 4px; 
+        overflow: hidden; 
+    }
+    
+    .summary-row { 
+        display: flex; 
+        border-bottom: 1px solid #e2e8f0; 
+    }
+    
+    .summary-row:last-child { 
+        border-bottom: none; 
+    }
+    
+    .summary-label { 
+        flex: 1; 
+        background: #f1f5f9; 
+        padding: 6px 8px; 
+        font-weight: 700; 
+        color: #003366; 
+        font-size: 9pt; 
+        border-right: 1px solid #e2e8f0; 
+        display: flex; 
+        align-items: center; 
+    }
+    
+    .summary-val { 
+        flex: 1.5; 
+        padding: 6px 8px; 
+        font-weight: 600; 
+        color: #333; 
+        font-size: 9pt; 
+        display: flex; 
+        align-items: center; 
+    }
+    
+    .summary-val.highlight {
+        color: #003366;
+        font-weight: 700;
+        font-size: 10pt;
+    }
+    
+    .achievement-content { 
+        flex: 1; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        color: #64748b; 
+        font-style: italic; 
+        font-size: 11pt; 
+        background: #f8fafc; 
+        text-align: center; 
+        padding: 10px; 
+    }
+    
+    .footer-section { 
+        display: grid; 
+        grid-template-columns: 1fr 2fr 1fr; 
+        gap: 30px; 
+        align-items: flex-end; 
+        padding-top: 10px; 
+        border-top: 2px solid #003366; 
+        margin-top: auto; 
+    }
+    
+    .footer-left, .footer-right { 
+        text-align: center; 
+        padding-bottom: 5px; 
+        display: flex; 
+        flex-direction: column; 
+        justify-content: flex-end; 
+        height: 120px; 
+    }
+    
+    .signature-line { 
+        border-top: 2px solid #1f2937; 
+        width: 80%; 
+        margin: 0 auto 5px auto; 
+        padding-top: 5px; 
+        font-weight: 700; 
+        color: #003366; 
+        font-size: 10pt; 
+        text-transform: uppercase; 
+    }
+    
+    .footer-center { 
+        display: flex; 
+        flex-direction: column; 
+        gap: 10px; 
+        align-items: center; 
+        text-align: center; 
+        justify-content: flex-end; 
+        height: 120px; 
+        padding-bottom: 5px; 
+    }
+    
+    .promotion-banner { 
+        width: 100%; 
+        text-align: center; 
+        padding: 8px 15px; 
+        background: linear-gradient(135deg, #059669 0%, #10b981 100%); 
+        color: white; 
+        border-radius: 4px; 
+        font-weight: 700; 
+        font-size: 11pt; 
+        box-shadow: 0 3px 6px rgba(0,0,0,0.15); 
+    }
+    
+    .date-display { 
+        font-size: 9.5pt; 
+        color: #333; 
+        font-weight: 600; 
+    }
+
+    /* Screen-only: let footer flow naturally (no fixed height overflow) */
+    @media screen {
+        .footer-left, .footer-right, .footer-center {
+            height: auto;
+            min-height: 60px;
+        }
+        .footer-section {
+            margin-top: 10px;
+        }
+    }
+
+    /* Print Settings */
+    @media print {
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+        body {
+            background-color: white;
+            padding: 0;
+            margin: 0;
+        }
+        .front-container {
+            width: 297mm;
+            height: 209mm;
+            padding: 5mm;
+            margin: 0;
+            page-break-after: always;
+            page-break-inside: avoid;
+            overflow: hidden;
+        }
+        .back-page {
+            width: 297mm;
+            height: 209mm;
+            padding: 5mm;
+            margin: 0;
+            page-break-inside: avoid;
+            overflow: hidden;
+        }
+        .print-controls,
+        .print-btn {
+            display: none !important;
+        }
+        
+        /* B&W symmetry fixes */
+        body.bw-mode .front-container,
+        body.bw-mode .back-page {
+            padding-left: 2mm !important;
+            padding-right: 5mm !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            border: none !important;
+        }
+        
+        /* Fix vertical text causing left margin issue */
+        body.bw-mode .vertical-th {
+            width: 24px !important;
+            min-width: 24px !important;
+            max-width: 24px !important;
+            height: 210px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+        }
+        
+        body.bw-mode .pink-corner-header {
+            width: 120px !important;
+            min-width: 120px !important;
+        }
+        
+        body.bw-mode .marks-table {
+            table-layout: fixed !important;
+            width: 100% !important;
+        }
+    }
+
+    /* ============================================
+       BLACK & WHITE MODE - OPTIMIZED FOR A4 FIT
+       ============================================ */
+    
+    body.bw-mode {
+        background-color: white !important;
+        padding: 10px !important;
+    }
+    
+    /* Force ALL text to black and fully opaque */
+    body.bw-mode,
+    body.bw-mode *,
+    body.bw-mode span,
+    body.bw-mode div,
+    body.bw-mode p,
+    body.bw-mode td,
+    body.bw-mode th,
+    body.bw-mode strong,
+    body.bw-mode b,
+    body.bw-mode i,
+    body.bw-mode em,
+    body.bw-mode label,
+    body.bw-mode small,
+    body.bw-mode font {
+        color: black !important;
+        opacity: 1 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    /* Front page container - NO OUTER BORDER */
+    body.bw-mode .front-container {
+        background-color: white !important;
+        box-shadow: none !important;
+        margin: 0 auto 20px auto !important;
+        padding: 2mm 5mm 5mm 2mm !important;
+        width: 297mm;
+        height: 209mm;
+        border: none !important;
+    }
+    
+    /* Header grid */
+    body.bw-mode .header-grid {
+        background-color: white !important;
+        border: 0.5pt solid black !important;
+        border-radius: 0 !important;
+        margin-bottom: 10px !important;
+        padding: 10px !important;
+        grid-template-columns: 150px 1fr 120px !important;
+         /* Compact BW grid */
+    }
+    
+    /* Reduce height in BW mode */
+    body.bw-mode .logo-box,
+    body.bw-mode .photo-box {
+        height: 140px !important;
+    }
+
+    /* Term columns */
+    body.bw-mode .bg-green {
+        background-color: white !important;
+        border: 0.5pt solid black !important;
+        border-left: 1pt solid black !important;
+    }
+    
+    body.bw-mode .bg-pink {
+        background-color: white !important;
+        border: 0.5pt solid black !important;
+        border-right: 1pt solid black !important;
+    }
+    
+    body.bw-mode .bg-blue {
+        background-color: white !important;
+        border: 0.5pt solid black !important;
+        font-weight: bold !important;
+    }
+    
+    body.bw-mode .bg-scholastic {
+        background-color: white !important;
+        border: 0.5pt solid black !important;
+    }
+    
+    body.bw-mode .pink-corner-header {
+        background-color: white !important;
+        border: 0.5pt solid black !important;
+        width: 120px !important;
+        min-width: 120px !important;
+    }
+    
+    body.bw-mode .scholastic-label {
+        background-color: white !important;
+        border-bottom: 0.5pt solid black !important;
+        font-weight: bold !important;
+    }
+    
+    /* Subject cells */
+    body.bw-mode .subject-cell {
+        background-color: white !important;
+        border: 0.5pt solid black !important;
+        font-weight: bold !important;
+        width: 160px !important;      
+        font-size: 9pt !important;    
+        white-space: nowrap !important; 
+    }
+    
+    body.bw-mode .header-row-1 th {
+        background-color: white !important;
+        border: 0.5pt solid black !important;
+        font-weight: bold !important;
+    }
+    
+    body.bw-mode .row-ids td {
+        background-color: white !important;
+        border: 0.5pt solid black !important;
+        font-weight: bold !important;
+    }
+    
+    body.bw-mode .row-ids td.bg-green,
+    body.bw-mode .row-ids td.bg-pink,
+    body.bw-mode .row-ids td.bg-blue,
+    body.bw-mode .row-ids td.bg-scholastic {
+        background-color: white !important;
+    }
+    
+    /* Footer blocks */
+    body.bw-mode .footer-block {
+        border: 0.5pt solid black !important;
+        background-color: white !important;
+    }
+    
+    body.bw-mode .f-label {
+        background-color: white !important;
+        border-right: 0.5pt solid black !important;
+        font-weight: bold !important;
+    }
+    
+    body.bw-mode .f-value {
+        background-color: white !important;
+        font-weight: bold !important;
+    }
+    
+    /* Info table */
+    body.bw-mode .info-table {
+        border: 0.5pt solid black !important;
+        background-color: white !important;
+        margin-bottom: 20px !important;
+        margin-top: 20px !important;
+    }
+    
+    body.bw-mode .info-table td {
+        border: 0.5pt solid black !important;
+        background-color: white !important;
+        text-decoration: none !important;
+        padding: 4px 8px !important;
+    }
+    
+    body.bw-mode .label-cell {
+        background-color: white !important;
+        border: 0.5pt solid black !important;
+        font-weight: bold !important;
+        text-decoration: none !important;
+    }
+    
+    /* Text elements */
+    body.bw-mode .report-title {
+        border-bottom: 0.5pt solid black !important;
+    }
+    
+    body.bw-mode .school-name,
+    body.bw-mode .school-address,
+    body.bw-mode .school-meta,
+    body.bw-mode .school-contact,
+    body.bw-mode .class-info {
+        color: black !important;
+        opacity: 1 !important;
+    }
+    
+    body.bw-mode .session-badge {
+        background-color: white !important;
+        border: 0.5pt solid black !important;
+        font-weight: bold !important;
+    }
+    
+    /* ============== BACK PAGE B&W OPTIMIZATION ============== */
+    
+    body.bw-mode .back-page {
+        background-color: white !important;
+        box-shadow: none !important;
+        padding: 5mm !important;
+        width: 297mm;
+        height: 209mm;
+        overflow: hidden;
+        border: none !important;
+    }
+    
+    /* Reduce gaps in B&W mode to save space */
+    body.bw-mode .main-grid,
+    body.bw-mode .second-row,
+    body.bw-mode .third-row {
+        gap: 8px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    /* Compact table cells in B&W */
+    body.bw-mode .back-page td,
+    body.bw-mode .back-page th {
+        padding: 2px 4px !important;
+        border: 0.5pt solid black !important;
+    }
+    
+    /* All boxes - thinner borders for print */
+    body.bw-mode .section-box,
+    body.bw-mode .grade-scale-box,
+    body.bw-mode .attendance-box,
+    body.bw-mode .student-photo-box,
+    body.bw-mode .achievement-box {
+        border: 0.5pt solid black !important;
+        background-color: white !important;
+    }
+    
+    /* All content in boxes - force black */
+    body.bw-mode .section-box *,
+    body.bw-mode .grade-scale-box *,
+    body.bw-mode .attendance-box *,
+    body.bw-mode .student-photo-box *,
+    body.bw-mode .achievement-box * {
+        color: black !important;
+        background-color: white !important;
+        opacity: 1 !important;
+    }
+    
+    /* Section headers */
+    body.bw-mode .section-header,
+    body.bw-mode .table-header-bg {
+        background-color: white !important;
+        color: black !important;
+        border-bottom: 0.5pt solid black !important;
+        font-weight: bold !important;
+        padding: 4px !important;
+    }
+    
+    /* FIX: Subtext in headers */
+    body.bw-mode .section-header span,
+    body.bw-mode .table-header-bg span,
+    body.bw-mode .section-header small,
+    body.bw-mode .table-header-bg small {
+        color: black !important;
+        opacity: 1 !important;
+        font-size: 7.5pt !important;
+    }
+    
+    /* FIX: Specifically target opacity-based gray text */
+    body.bw-mode [style*="opacity: 0.8"],
+    body.bw-mode [style*="opacity:0.8"],
+    body.bw-mode [style*="opacity: .8"] {
+        color: black !important;
+        opacity: 1 !important;
+    }
+    
+    /* Achievement content */
+    body.bw-mode .achievement-content {
+        background-color: white !important;
+        color: black !important;
+        font-style: normal !important;
+        opacity: 1 !important;
+        padding: 8px !important;
+    }
+    
+    /* Summary values */
+    body.bw-mode .summary-val {
+        color: black !important;
+        background-color: white !important;
+        opacity: 1 !important;
+        padding: 4px 6px !important;
+    }
+    
+    body.bw-mode .summary-val.highlight {
+        color: black !important;
+        font-weight: bold !important;
+        background-color: white !important;
+    }
+    
+    body.bw-mode .summary-label {
+        color: black !important;
+        background-color: white !important;
+        border-right: 0.5pt solid black !important;
+        font-weight: bold !important;
+        padding: 4px 6px !important;
+    }
+    
+    /* Tables */
+    body.bw-mode .back-page table {
+        border: 0.5pt solid black !important;
+        background-color: white !important;
+    }
+    
+    body.bw-mode .back-page th {
+        background-color: white !important;
+        color: black !important;
+        border: 0.5pt solid black !important;
+        font-weight: bold !important;
+    }
+    
+    body.bw-mode .back-page td {
+        background-color: white !important;
+        color: black !important;
+        border: 0.5pt solid black !important;
+    }
+    
+    /* Remove alternating row colors */
+    body.bw-mode .back-page tr:nth-child(even),
+    body.bw-mode .back-page tr:nth-child(odd) {
+        background-color: white !important;
+    }
+    
+    /* Grade badges */
+    body.bw-mode .grade-badge {
+        background-color: white !important;
+        color: black !important;
+        border: 0.5pt solid black !important;
+        border-radius: 0 !important;
+        font-weight: bold !important;
+    }
+    
+    /* Summary table */
+    body.bw-mode .summary-table {
+        border: 0.5pt solid black !important;
+        background-color: white !important;
+    }
+    
+    body.bw-mode .summary-row {
+        border-bottom: 0.5pt solid black !important;
+        background-color: white !important;
+    }
+    
+    /* Photo placeholder */
+    body.bw-mode .photo-placeholder {
+        width: 120px !important;
+        height: 150px !important;
+        background-color: white !important;
+        border: 0.5pt solid black !important;
+        color: black !important;
+    }
+    
+    body.bw-mode .photo-container {
+        gap: 8px !important;
+        padding: 8px !important;
+    }
+    
+    /* Footer section */
+    body.bw-mode .footer-section {
+        border-top: 0.5pt solid black !important;
+        background-color: white !important;
+        gap: 20px !important;
+        padding-top: 8px !important;
+    }
+    body.bw-mode .footer {
+        margin-top: 25px !important;
+        gap: 5px !important;
+    }
+
+    body.bw-mode .signature-line {
+        border-top: 0.5pt solid black !important;
+        color: black !important;
+    }
+    
+    /* Promotion banner */
+    body.bw-mode .promotion-banner {
+        background: white !important;
+        color: black !important;
+        border: 0.5pt solid black !important;
+        font-weight: bold !important;
+        padding: 6px 12px !important;
+    }
+    
+    body.bw-mode .date-display {
+        color: black !important;
+    }
+    
+    /* Marks table compact */
+    body.bw-mode .marks-table {
+        border: 0.5pt solid black !important;
+        margin-bottom: 13px !important;
+    }
+    
+    body.bw-mode .marks-table th,
+    body.bw-mode .marks-table td {
+        border: 0.5pt solid black !important;
+        padding: 4px 3px !important;
+        font-size: 11pt;
+    }
+    
+    /* FIX: Vertical text headers - remove rotation causing left margin */
+    body.bw-mode .vertical-th {
+        width: 24px !important;
+        min-width: 24px !important;
+        max-width: 24px !important;
+        border: 0.5pt solid black !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+    }
+    
+    body.bw-mode .vertical-wrapper {
+        writing-mode: vertical-rl !important;
+        transform: none !important; /* Remove rotation causing shift */
+        text-orientation: mixed !important;
+        font-size: 11px !important;
+        letter-spacing: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Watermark hidden */
+    body.bw-mode .watermark-image,
+    body.bw-mode .watermark-text {
+        display: none !important;
+    }
+    
+    /* Force all inline styles to black */
+    body.bw-mode [style*="color"] {
+        color: black !important;
+    }
+    
+    body.bw-mode [style*="opacity"] {
+        opacity: 1 !important;
+        color: black !important;
+    }
+    
+    /* Ensure all small/subtext is black */
+    body.bw-mode small,
+    body.bw-mode .small-text,
+    body.bw-mode [style*="font-size: 7"],
+    body.bw-mode [style*="font-size: 8"] {
+        color: black !important;
+        opacity: 1 !important;
+    }
+    
+    /* Left align text fix */
+    body.bw-mode .left-align {
+        color: black !important;
+        opacity: 1 !important;
+    }
+
+    /* Compact footer heights for B&W */
+    body.bw-mode .footer-left,
+    body.bw-mode .footer-right,
+    body.bw-mode .footer-center {
+        height: 100px !important;
+    }
+
+        /* Fix: Only data cells in tbody normal for R(18), S(19), T(20) 
+    This preserves bold labels in the header row */
+    body.bw-mode .marks-table tbody td:nth-child(18),
+    body.bw-mode .marks-table tbody td:nth-child(19),
+    body.bw-mode .marks-table tbody td:nth-child(20) {
+        font-weight: normal !important;  /* Only data cells normal */
+    }
+
+    /* U(21) and V(22) bold everywhere - both headers (th) and data (td) */
+    body.bw-mode .marks-table td:nth-child(21),
+    body.bw-mode .marks-table td:nth-child(22),
+    body.bw-mode .marks-table th:nth-child(21),
+    body.bw-mode .marks-table th:nth-child(22) {
+        font-weight: bold !important;    /* U, V bold */
+    }
+    body.bw-mode .footer-left,
+body.bw-mode .footer-right {
+    height: 140px !important;  /* Increased from 100px - adjust as needed */
+}
+
+body.bw-mode .signature-line {
+    margin-top: 60px !important;  /* Space above the underline */
+    padding-top: 8px !important;  /* Space between text and line */
+}
+
+body.bw-mode .att-term-box {
+    border: 0.5pt solid black !important;
+    background: white !important;
+}
+
+body.bw-mode .vertical-th {
+            width: 24px !important;
+            min-width: 24px !important;
+            max-width: 24px !important;
+            height: 210px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+        }
+
+    /* ── NA / AB sentinel cell badges ──────────────────────────────── */
+    .cell-na {
+        display: inline-block;
+        background: #e0e0e0;        /* neutral grey — subject not applicable */
+        color: #555;
+        font-size: 7pt;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        padding: 1px 4px;
+        border-radius: 3px;
+        border: 1px solid #bdbdbd;
+        line-height: 1.4;
+    }
+    .cell-ab {
+        display: inline-block;
+        background: #fff3e0;        /* soft amber — absent */
+        color: #e65100;
+        font-size: 7pt;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        padding: 1px 4px;
+        border-radius: 3px;
+        border: 1px solid #ffb74d;
+        line-height: 1.4;
+    }
+    /* BW print mode: keep NA/AB legible in greyscale */
+    body.bw-mode .cell-na {
+        background: #e0e0e0; color: #333;
+        border-color: #999;
+    }
+    body.bw-mode .cell-ab {
+        background: #f5f5f5; color: #333;
+        border-color: #999;
+    }
+</style>
+</head>
+<body>
+
+<div class="print-controls">
+    <button class="print-btn btn-bw" onclick="togglePrint(true)">
+        B&amp;W Print
+    </button>
+    <button class="print-btn btn-color" onclick="togglePrint(false)">
+        Color Print
+    </button>
+</div>
+
+
+
+
+<div class="front-container">
+    <div class="header-grid">
+        <div class="logo-box">
+            <img src="logo.png" alt="School Logo" onerror="this.style.display='none'">
+        </div>
+        <div class="header-text">
+            <div class="report-title">Report Card</div>
+            <div class="school-name">PM Shri Jawahar Navodaya Vidyalaya</div>
+        <div class="compact-details">
+            <div class="school-address">Tarikhet, Almora, Uttarakhand - 263663</div>
+            <div class="school-meta-inline">
+                <span class="meta-item affiliation">CBSE Affiliation No. 3540004</span>
+                
+                    
+                    <span class="meta-separator">|</span>
+                    <span class="meta-item phone"> ☎️ 05966-297230</span>
+                    <span class="meta-separator">|</span>
+                    <span class="meta-item "> 📩 jnvalmora123@gmail.com</span>
+                
+            </div>
+        </div>
+            <div class="class-info">Class : XI-SC</div>
+            <div class="session-badge">Session : 2025-26</div>
+        </div>
+        <div class="photo-box">
+            <img src="../photos/3.jpg" alt="Student Photo" onerror="this.style.display='none'">
+        </div>
+    </div>
+
+    <table class="info-table">
+        <tr>
+            <td class="label-cell">Roll No.</td><td>3</td>
+            <td class="label-cell">Apar Id</td><td>9990 0011 1222</td>
+            <td class="label-cell">Student Name</td><td>Diya Patel</td>      
+        </tr>
+        <tr>
+            <td class="label-cell">Mother Name</td><td>Anita Patel</td>
+            <td class="label-cell">Father Name</td><td>Suresh Patel</td>
+            <td class="label-cell">DOB</td><td>22.11.2013</td>
+        </tr>
+    </table>
+
+    <table class="marks-table">
+        <thead>
+            <tr class="header-row-1">
+                <th class="bg-scholastic pink-corner-header" rowspan="2">
+                    <div class="pink-container">
+                        <div class="scholastic-label">Scholastic Areas:</div>
+                        <div class="subject-name-label">Subject Name</div>
+                    </div>
+                </th>
+                <th class="bg-green" colspan="8">Term-1</th>
+                <th class="bg-pink" colspan="8">Term-2</th>
+                <th class="bg-blue" colspan="5">Overall</th>
+            </tr>
+            <tr>
+                <!-- Term 1 Columns B-I (8 columns) -->
+                <th class="bg-green vertical-th"><div class="vertical-wrapper">Marks in UT-1 (MM 40)</div></th>
+                <th class="bg-green vertical-th"><div class="vertical-wrapper">Marks in UT-2 (MM 40)</div></th>
+                <th class="bg-green vertical-th"><div class="vertical-wrapper">Marks in best UT</div></th>
+                <th class="bg-green vertical-th"><div class="vertical-wrapper">Marks in Half Yearly Examination<br>(MM 80 / 70 / 60)</div></th>
+                <th class="bg-green vertical-th"><div class="vertical-wrapper">Practical / Internal Assessment<br>(MM 20 / 30 / 40)</div></th>
+                <th class="bg-green vertical-th"><div class="vertical-wrapper">Total Marks (Theory)<br>Half Yearly Examination + Best UT</div></th>
+                <th class="bg-green vertical-th"><div class="vertical-wrapper">Total of Theory Marks + Best Marks<br>Converted to 100 Marks</div></th>
+                <th class="bg-green vertical-th"><div class="vertical-wrapper">Weightage (Theory) Term-1<br>(40% of H)</div></th>
+
+                <!-- Term 2 Columns J-Q (8 columns) -->
+                <th class="bg-pink vertical-th"><div class="vertical-wrapper">Marks in UT-3 (MM 40)</div></th>
+                <th class="bg-pink vertical-th"><div class="vertical-wrapper">Marks in UT-4 (MM 40)</div></th>
+                <th class="bg-pink vertical-th"><div class="vertical-wrapper">Marks in Best UT</div></th>
+                <th class="bg-pink vertical-th"><div class="vertical-wrapper">Marks in Annual Examination<br>(MM 80 / 70 / 60)</div></th>
+                <th class="bg-pink vertical-th"><div class="vertical-wrapper">Practical / Internal Assessment<br>(MM 20 / 30 / 40)</div></th>
+                <th class="bg-pink vertical-th"><div class="vertical-wrapper">Total Marks (Theory)<br>Yearly Examination + Best UT</div></th>
+                <th class="bg-pink vertical-th"><div class="vertical-wrapper">Total of Theory Marks + Best Marks<br>Converted to 100 Marks</div></th>
+                <th class="bg-pink vertical-th"><div class="vertical-wrapper">Weightage (Theory) Term-2<br>(60% of P)</div></th>
+
+                <!-- Overall Columns R-V (5 columns) -->
+                <th class="bg-blue vertical-th"><div class="vertical-wrapper">Total of Weightage of Theory<br>MM 100 (I + Q)</div></th>
+                <th class="bg-blue vertical-th"><div class="vertical-wrapper">Overall Theory Marks<br>Converted to MM 80 / 70 / 60</div></th>
+                <th class="bg-blue vertical-th"><div class="vertical-wrapper">Average Marks of<br>Practical / Internal Assessment<br>MM 20 / 30 / 40(Average of F & O)</div></th>
+                <th class="bg-blue vertical-th"><div class="vertical-wrapper">Total of Theory &<br>Practical / Internal Assessment<br>MM 100 (S + T)</div></th>
+                <th class="bg-blue vertical-th"><div class="vertical-wrapper">Grades</div></th>
+            </tr>
+            <tr class="row-ids">
+                <td class="bg-scholastic">A</td>
+                <td class="bg-green">B</td> <td class="bg-green">C</td> <td class="bg-green">D</td> <td class="bg-green">E</td> <td class="bg-green">F</td> <td class="bg-green">G</td> <td class="bg-green">H</td> <td class="bg-green">I</td>
+                <td class="bg-pink">J</td> <td class="bg-pink">K</td> <td class="bg-pink">L</td> <td class="bg-pink">M</td> <td class="bg-pink">N</td> <td class="bg-pink">O</td> <td class="bg-pink">P</td> <td class="bg-pink">Q</td>
+                <td class="bg-blue">R</td> <td class="bg-blue">S</td> <td class="bg-blue">T</td> <td class="bg-blue">U</td> <td class="bg-blue">V</td>
+            </tr>
+        </thead>
+        <tbody>
+            
+            <tr>
+                <td class="subject-cell">Subject 1</td>
+                
+                <!-- Term 1 Data (B-I) -->
+                <td class="bg-green">38</td>
+                <td class="bg-green">33</td>
+                <td class="bg-green">38</td>
+                <td class="bg-green">80</td>
+                <td class="bg-green">16</td>
+                <td class="bg-green">118</td>
+                <td class="bg-green">98</td>
+                <td class="bg-green">39</td>
+
+                <!-- Term 2 Data (J-Q) -->
+                <td class="bg-pink">30</td>
+                <td class="bg-pink">28</td>
+                <td class="bg-pink">30</td>
+                <td class="bg-pink">55</td>
+                <td class="bg-pink">19</td>
+                <td class="bg-pink">85</td>
+                <td class="bg-pink">71</td>
+                <td class="bg-pink">43</td>
+
+                <!-- Overall Data (R-V) -->
+                <td class="bg-blue">82</td>
+                <td class="bg-blue">66</td>
+                <td class="bg-blue">18</td>
+                <td class="bg-blue col-v-bold">84</td>
+                <td class="bg-blue col-v-bold">A2</td>
+            </tr>
+            
+            <tr>
+                <td class="subject-cell">Subject 2</td>
+                
+                <!-- Term 1 Data (B-I) -->
+                <td class="bg-green">38</td>
+                <td class="bg-green">38</td>
+                <td class="bg-green">38</td>
+                <td class="bg-green">69</td>
+                <td class="bg-green">12</td>
+                <td class="bg-green">107</td>
+                <td class="bg-green">89</td>
+                <td class="bg-green">36</td>
+
+                <!-- Term 2 Data (J-Q) -->
+                <td class="bg-pink">34</td>
+                <td class="bg-pink">31</td>
+                <td class="bg-pink">34</td>
+                <td class="bg-pink">70</td>
+                <td class="bg-pink">15</td>
+                <td class="bg-pink">104</td>
+                <td class="bg-pink">87</td>
+                <td class="bg-pink">52</td>
+
+                <!-- Overall Data (R-V) -->
+                <td class="bg-blue">88</td>
+                <td class="bg-blue">70</td>
+                <td class="bg-blue">14</td>
+                <td class="bg-blue col-v-bold">84</td>
+                <td class="bg-blue col-v-bold">A2</td>
+            </tr>
+            
+            <tr>
+                <td class="subject-cell">Subject 3</td>
+                
+                <!-- Term 1 Data (B-I) -->
+                <td class="bg-green">31</td>
+                <td class="bg-green">35</td>
+                <td class="bg-green">35</td>
+                <td class="bg-green">64</td>
+                <td class="bg-green">16</td>
+                <td class="bg-green">99</td>
+                <td class="bg-green">82</td>
+                <td class="bg-green">33</td>
+
+                <!-- Term 2 Data (J-Q) -->
+                <td class="bg-pink">34</td>
+                <td class="bg-pink">38</td>
+                <td class="bg-pink">38</td>
+                <td class="bg-pink">49</td>
+                <td class="bg-pink">13</td>
+                <td class="bg-pink">87</td>
+                <td class="bg-pink">72</td>
+                <td class="bg-pink">43</td>
+
+                <!-- Overall Data (R-V) -->
+                <td class="bg-blue">76</td>
+                <td class="bg-blue">61</td>
+                <td class="bg-blue">14</td>
+                <td class="bg-blue col-v-bold">75</td>
+                <td class="bg-blue col-v-bold">B1</td>
+            </tr>
+            
+            <tr>
+                <td class="subject-cell">Subject 4</td>
+                
+                <!-- Term 1 Data (B-I) -->
+                <td class="bg-green">32</td>
+                <td class="bg-green">33</td>
+                <td class="bg-green">33</td>
+                <td class="bg-green">72</td>
+                <td class="bg-green">15</td>
+                <td class="bg-green">105</td>
+                <td class="bg-green">88</td>
+                <td class="bg-green">35</td>
+
+                <!-- Term 2 Data (J-Q) -->
+                <td class="bg-pink">30</td>
+                <td class="bg-pink">34</td>
+                <td class="bg-pink">34</td>
+                <td class="bg-pink">55</td>
+                <td class="bg-pink">12</td>
+                <td class="bg-pink">89</td>
+                <td class="bg-pink">74</td>
+                <td class="bg-pink">44</td>
+
+                <!-- Overall Data (R-V) -->
+                <td class="bg-blue">79</td>
+                <td class="bg-blue">63</td>
+                <td class="bg-blue">14</td>
+                <td class="bg-blue col-v-bold">77</td>
+                <td class="bg-blue col-v-bold">B1</td>
+            </tr>
+            
+            <tr>
+                <td class="subject-cell">Subject 5</td>
+                
+                <!-- Term 1 Data (B-I) -->
+                <td class="bg-green">37</td>
+                <td class="bg-green">31</td>
+                <td class="bg-green">37</td>
+                <td class="bg-green">58</td>
+                <td class="bg-green">18</td>
+                <td class="bg-green">95</td>
+                <td class="bg-green">79</td>
+                <td class="bg-green">32</td>
+
+                <!-- Term 2 Data (J-Q) -->
+                <td class="bg-pink">34</td>
+                <td class="bg-pink">36</td>
+                <td class="bg-pink">36</td>
+                <td class="bg-pink">74</td>
+                <td class="bg-pink">15</td>
+                <td class="bg-pink">110</td>
+                <td class="bg-pink">92</td>
+                <td class="bg-pink">55</td>
+
+                <!-- Overall Data (R-V) -->
+                <td class="bg-blue">87</td>
+                <td class="bg-blue">70</td>
+                <td class="bg-blue">16</td>
+                <td class="bg-blue col-v-bold">86</td>
+                <td class="bg-blue col-v-bold">A2</td>
+            </tr>
+            
+            <tr>
+                <td class="subject-cell">Subject 6</td>
+                
+                <!-- Term 1 Data (B-I) -->
+                <td class="bg-green">35</td>
+                <td class="bg-green">40</td>
+                <td class="bg-green">40</td>
+                <td class="bg-green">70</td>
+                <td class="bg-green">13</td>
+                <td class="bg-green">110</td>
+                <td class="bg-green">92</td>
+                <td class="bg-green">37</td>
+
+                <!-- Term 2 Data (J-Q) -->
+                <td class="bg-pink">40</td>
+                <td class="bg-pink">29</td>
+                <td class="bg-pink">40</td>
+                <td class="bg-pink">68</td>
+                <td class="bg-pink">15</td>
+                <td class="bg-pink">108</td>
+                <td class="bg-pink">90</td>
+                <td class="bg-pink">54</td>
+
+                <!-- Overall Data (R-V) -->
+                <td class="bg-blue">91</td>
+                <td class="bg-blue">73</td>
+                <td class="bg-blue">14</td>
+                <td class="bg-blue col-v-bold">87</td>
+                <td class="bg-blue col-v-bold">A2</td>
+            </tr>
+            
+            <tr>
+                <td class="subject-cell">Subject 7</td>
+                
+                <!-- Term 1 Data (B-I) -->
+                <td class="bg-green">32</td>
+                <td class="bg-green">40</td>
+                <td class="bg-green">40</td>
+                <td class="bg-green">64</td>
+                <td class="bg-green">18</td>
+                <td class="bg-green">104</td>
+                <td class="bg-green">87</td>
+                <td class="bg-green">35</td>
+
+                <!-- Term 2 Data (J-Q) -->
+                <td class="bg-pink">35</td>
+                <td class="bg-pink">31</td>
+                <td class="bg-pink">35</td>
+                <td class="bg-pink">49</td>
+                <td class="bg-pink">19</td>
+                <td class="bg-pink">84</td>
+                <td class="bg-pink">70</td>
+                <td class="bg-pink">42</td>
+
+                <!-- Overall Data (R-V) -->
+                <td class="bg-blue">77</td>
+                <td class="bg-blue">62</td>
+                <td class="bg-blue">18</td>
+                <td class="bg-blue col-v-bold">80</td>
+                <td class="bg-blue col-v-bold">B1</td>
+            </tr>
+            
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <div class="footer-block">
+            <div class="f-label">Overall Marks</div>
+            <div class="f-value">406</div>
+        </div>
+        <div class="footer-block">
+            <div class="f-label">Percentage</div>
+            <div class="f-value">81.20</div>
+        </div>
+        <div class="footer-block">
+            <div class="f-label">Grade</div>
+            <div class="f-value">A2</div>
+        </div>
+        <div class="footer-block">
+            <div class="f-label">Rank</div>
+            <div class="f-value">4</div>
+        </div>
+        <div class="footer-block">
+            <div class="f-label">Result</div>
+            <div class="f-value">Pass</div>
+        </div>
+    </div>
+</div>
+
+<div class="back-page">
+    
+    <div class="watermark-image">
+        <img src="watermark.jpg" alt="Watermark">
+    </div>
+    
+    
+    <div class="back-content">
+        <!-- Row 1: Co-Scholastic, Discipline, General Studies -->
+        <div class="main-grid">
+            <div class="section-box">
+                <div class="section-header">Co-Scholastic Areas<br><span style="font-size: 7.5pt; opacity: 0.8; font-weight: 400;">(5 Point Grading Scale: A–E)</span></div>
+                <table>
+                    <thead>
+                        <tr><th style="width: 60%; text-align: left; padding-left: 8px;">Activity</th><th style="width: 20%;">T1</th><th style="width: 20%;">T2</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="left-align">SEWA (Community Service)</td><td><span class="grade-badge">A</span></td><td><span class="grade-badge">A</span></td></tr>
+                        <tr><td class="left-align">Health & Physical Education</td><td><span class="grade-badge">A</span></td><td><span class="grade-badge">A</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section-box">
+                <div class="section-header">Discipline<br><span style="font-size: 7.5pt; opacity: 0.8; font-weight: 400;">(3 Point Grading Scale: A, B, C)</span></div>
+                <table>
+                    <thead>
+                        <tr><th style="width: 60%; text-align: left; padding-left: 8px;">Activity</th><th style="width: 20%;">T1</th><th style="width: 20%;">T2</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="left-align">Discipline</td><td><span class="grade-badge">A</span></td><td><span class="grade-badge">A</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section-box">
+                <div class="section-header">General Studies<br><span style="font-size: 7.5pt; opacity: 0.8; font-weight: 400;">(Grading Scale: A1–D2)</span></div>
+                <table>
+                    <thead>
+                        <tr><th style="width: 50%;">Term 1</th><th style="width: 50%;">Term 2</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr style="height: 100%;">
+                            <td style="padding: 20px; vertical-align: middle;"><span class="grade-badge" style="font-size: 11pt; padding: 4px 8px;">A2</span></td>
+                            <td style="padding: 20px; vertical-align: middle;"><span class="grade-badge" style="font-size: 11pt; padding: 4px 8px;">A2</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Row 2: Grading Scales, Bagless Days, Attendance -->
+        <div class="second-row">
+            <div class="grade-scale-box">
+                <div class="table-header-bg">Co-Scholastic Grading Scale<br><span style="font-size: 7.5pt; opacity: 0.8; font-weight: 400;">(5-Point System)</span></div>
+                <table>
+                    <thead><tr><th style="width: 30%;">Grade</th><th style="width: 70%;">Connotation</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="grade-badge">A</span></td><td style="font-weight: 600;">EXEMPLARY</td></tr>
+                        <tr><td><span class="grade-badge">B</span></td><td style="font-weight: 600;">PROFICIENT</td></tr>
+                        <tr><td><span class="grade-badge">C</span></td><td style="font-weight: 600;">DEVELOPING</td></tr>
+                        <tr><td><span class="grade-badge">D</span></td><td style="font-weight: 600;">EMERGING</td></tr>
+                        <tr><td><span class="grade-badge">E</span></td><td style="font-weight: 600;">BEGINNER</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section-box" style="display: flex; flex-direction: column;">
+                <div class="table-header-bg" style="font-size: 7.5pt; padding: 3px 6px;">Discipline Grading Scale <span style="opacity:0.8; font-weight:400;">(3-Point System)</span></div>
+                <table style="flex-shrink: 0;">
+                    <thead><tr><th style="width: 30%; padding: 2px 4px; font-size: 7pt;">Grade</th><th style="width: 70%; padding: 2px 4px; font-size: 7pt;">Connotation</th></tr></thead>
+                    <tbody>
+                        <tr><td style="padding: 2px 4px;"><span class="grade-badge" style="font-size: 7.5pt; padding: 1px 5px;">A</span></td><td style="font-weight: 600; font-size: 7.5pt; padding: 2px 4px;">OUTSTANDING</td></tr>
+                        <tr><td style="padding: 2px 4px;"><span class="grade-badge" style="font-size: 7.5pt; padding: 1px 5px;">B</span></td><td style="font-weight: 600; font-size: 7.5pt; padding: 2px 4px;">VERY GOOD</td></tr>
+                        <tr><td style="padding: 2px 4px;"><span class="grade-badge" style="font-size: 7.5pt; padding: 1px 5px;">C</span></td><td style="font-weight: 600; font-size: 7.5pt; padding: 2px 4px;">FAIR</td></tr>
+                    </tbody>
+                </table>
+                <div class="table-header-bg" style="font-size: 7.5pt; padding: 3px 6px; margin-top: 4px;">10 Bagless Days Participation</div>
+                <table style="flex-grow: 1;">
+                    <thead><tr><th style="width: 50%;">During Vacation</th><th style="width: 50%;">During School</th></tr></thead>
+                    <tbody>
+                        <tr style="height: 100%;">
+                            <td style="font-weight: 700; color: #15803d; font-size: 11pt; vertical-align: middle;">YES</td>
+                            <td style="font-weight: 700; color: #15803d; font-size: 11pt; vertical-align: middle;">YES</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="attendance-box">
+                <div class="table-header-bg">Attendance Record</div>
+                <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; padding: 6px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                        <div class="att-term-box">
+                            <div style="font-size: 8.5pt; font-weight:700;">Term 1</div>
+                            <div style="font-size: 8.5pt; font-weight:700;">185 / 200</div>
+                            <div style="color: #15803d; font-weight: 700; font-size: 9pt;">92.5%</div>
+                        </div>
+                        <div class="att-term-box">
+                            <div style="font-size: 8.5pt; font-weight:700;">Term 2</div>
+                            <div style="font-size: 8.5pt; font-weight:700;">185 / 200</div>
+                            <div style="color: #15803d; font-weight: 700; font-size: 9pt;">92.5%</div>
+                        </div>
+                    </div>
+                    <div style="background: #003366; color: white; padding: 5px; border-radius: 3px; text-align: center; font-weight: 700;">
+                        Overall: 92.5%
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Row 3: Scholastic Scale, Profile, Achievement -->
+        <div class="third-row">
+            <div class="grade-scale-box">
+                <div class="table-header-bg">Scholastic Grading Scale<br><span style="font-size: 7.5pt; opacity: 0.8; font-weight: 400;">(8-Point System)</span></div>
+                <table>
+                    <tbody>
+                        <tr><td style="width: 25%;"><span class="grade-badge">A1</span></td><td>91 - 100</td></tr>
+                        <tr><td><span class="grade-badge">A2</span></td><td>81 - 90</td></tr>
+                        <tr><td><span class="grade-badge">B1</span></td><td>71 - 80</td></tr>
+                        <tr><td><span class="grade-badge">B2</span></td><td>61 - 70</td></tr>
+                        <tr><td><span class="grade-badge">C1</span></td><td>51 - 60</td></tr>
+                        <tr><td><span class="grade-badge">C2</span></td><td>41 - 50</td></tr>
+                        <tr><td><span class="grade-badge">D</span></td><td>33 - 40</td></tr>
+                        <tr><td><span class="grade-badge" style="background-color: #b91c1c;">E</span></td><td>0 - 32</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="student-photo-box">
+                <div class="table-header-bg">Student Profile & Performance</div>
+                <div class="photo-container">
+                    <div class="photo-placeholder">
+                        <img src="../photos/3.jpg" alt="Student" onerror="this.style.display='none'; this.parentElement.innerHTML='Photo<br>(35x45mm)'">
+                    </div>
+                    
+                    <div class="summary-table-wrapper">
+                        <div class="summary-table">
+                            <div class="summary-row"><div class="summary-label">Name</div><div class="summary-val" style="color: #003366;">Diya Patel</div></div>
+                            <div class="summary-row"><div class="summary-label">Roll No.</div><div class="summary-val">3</div></div>
+                            <div class="summary-row"><div class="summary-label">Percentage</div><div class="summary-val highlight">81.20%</div></div>
+                            <div class="summary-row"><div class="summary-label">Rank</div><div class="summary-val highlight">#4</div></div>
+                            <div class="summary-row"><div class="summary-label">Class</div><div class="summary-val">XI-SC</div></div>
+                            <div class="summary-row"><div class="summary-label">Session</div><div class="summary-val">2025-26</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="achievement-box">
+                <div class="table-header-bg">Any Outstanding Achievement</div>
+                <div class="achievement-content">Best Artist</div>
+            </div>
+        </div>
+        
+        <div class="footer-section">
+            <div class="footer-left">
+                <div class="signature-line">Class Teacher</div>
+            </div>
+            <div class="footer-center">
+                <div class="promotion-banner">🎓 Promoted to XII-SC</div>
+                <div class="date-display">Date of Issue: 31-03-2026</div>
+            </div>
+            <div class="footer-right">
+                <div class="signature-line">Principal</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    function togglePrint(isBW) {
+        if (isBW) {
+            document.body.classList.add('bw-mode');
+        }
+        setTimeout(() => {
+            window.print();
+            document.body.classList.remove('bw-mode');
+        }, 100);
+    }
+</script>
+
+</body>
+</html>
